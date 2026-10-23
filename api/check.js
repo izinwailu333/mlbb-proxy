@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-    // CORS ကို ခွင့်ပြုရန်
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     
@@ -8,13 +7,13 @@ export default async function handler(req, res) {
     }
 
     const { userid, zoneid } = req.query;
-    
-    // Vercel Environment ထဲက RapidAPI Key ကို ယူမယ်
     const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
 
-    // သတိပြုရန် - အောက်ပါ Link နှင့် Host ကို သင်ရွေးထားသော RapidAPI မှ အချက်အလက်များဖြင့် ပြောင်းထည့်ရန်လိုသည်
-    const rapidApiHost = 'YOUR_RAPIDAPI_HOST_HERE'; // ဥပမာ - mlbb-checker.p.rapidapi.com
-    const url = `https://${rapidApiHost}/check?id=${userid}&zone=${zoneid}`; // API ရဲ့ တကယ့် လမ်းကြောင်း
+    // Headers ထဲက သင်တွေ့တဲ့ Host နာမည်အမှန်ကို ဒီမှာပြောင်းထည့်ပါ
+    const rapidApiHost = 'true-id-mobile-legends.p.rapidapi.com'; 
+    
+    // API ခေါ်မည့် URL (RapidAPI က ပြထားသည့်အတိုင်း လိုအပ်ပါက ပြင်နိုင်ပါသည်)
+    const url = `https://${rapidApiHost}/?userid=${userid}&zoneid=${zoneid}`;
 
     try {
         const response = await fetch(url, {
