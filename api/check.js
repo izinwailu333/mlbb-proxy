@@ -8,20 +8,28 @@ export default async function handler(req, res) {
         return res.status(200).end();
     }
 
+    // App မှ လှမ်းပို့လိုက်သော userid နှင့် zoneid ကို လက်ခံယူခြင်း
     const { userid, zoneid } = req.query;
     const G2BULK_API_KEY = process.env.G2BULK_API_KEY;
 
-    // သတိပြုရန် - အောက်ပါ Link သည် ဥပမာသာဖြစ်ပါသည်။ G2Bulk Document မှ ID စစ်သည့် Link အမှန်ဖြင့် အစားထိုးပါ။
-    const url = `https://api.g2bulk.com/v1/games/mlbb/check?player_id=${userid}&server_id=${zoneid}`; 
+    // G2Bulk ၏ မှန်ကန်သော Player Check API လမ်းကြောင်း
+    const url = 'https://api.g2bulk.com/v1/games/checkPlayerId';
 
     try {
         const response = await fetch(url, {
-            method: 'GET', // G2Bulk မှ POST ဖြင့်တောင်းဆိုပါက 'POST' ဟု ပြင်ပါ။
+            method: 'POST', // G2Bulk စည်းမျဉ်းအရ POST ဖြင့်သာ ပို့ရမည်
             headers: {
                 'X-API-Key': G2BULK_API_KEY,
                 'Content-Type': 'application/json'
-            }
+            },
+            // G2Bulk တောင်းဆိုထားသော Data ပုံစံအတိုင်း Body တွင် ထည့်ပို့ခြင်း
+            body: JSON.stringify({
+                game: "mlbb",
+                user_id: userid,
+                server_id: zoneid
+            })
         });
+        
         const data = await response.json();
         res.status(200).json(data);
     } catch (error) {
