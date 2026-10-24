@@ -1,31 +1,30 @@
 export default async function handler(req, res) {
+    // CORS ကို ခွင့်ပြုရန်
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Key');
     
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
 
     const { userid, zoneid } = req.query;
-    const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
+    const G2BULK_API_KEY = process.env.G2BULK_API_KEY;
 
-    // Headers ထဲက သင်တွေ့တဲ့ Host နာမည်အမှန်ကို ဒီမှာပြောင်းထည့်ပါ
-    const rapidApiHost = 'true-id-mobile-legends.p.rapidapi.com'; 
-    
-    // API ခေါ်မည့် URL (RapidAPI က ပြထားသည့်အတိုင်း လိုအပ်ပါက ပြင်နိုင်ပါသည်)
-    const url = `https://${rapidApiHost}/?userid=${userid}&zoneid=${zoneid}`;
+    // သတိပြုရန် - အောက်ပါ Link သည် ဥပမာသာဖြစ်ပါသည်။ G2Bulk Document မှ ID စစ်သည့် Link အမှန်ဖြင့် အစားထိုးပါ။
+    const url = `https://api.g2bulk.com/v1/games/mlbb/check?player_id=${userid}&server_id=${zoneid}`; 
 
     try {
         const response = await fetch(url, {
-            method: 'GET',
+            method: 'GET', // G2Bulk မှ POST ဖြင့်တောင်းဆိုပါက 'POST' ဟု ပြင်ပါ။
             headers: {
-                'x-rapidapi-key': RAPIDAPI_KEY,
-                'x-rapidapi-host': rapidApiHost
+                'X-API-Key': G2BULK_API_KEY,
+                'Content-Type': 'application/json'
             }
         });
         const data = await response.json();
         res.status(200).json(data);
     } catch (error) {
-        res.status(500).json({ error: "Failed to fetch from RapidAPI" });
+        res.status(500).json({ error: "Failed to fetch from G2Bulk" });
     }
 }
